@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2026 Valeri Gokadze
+ *     Copyright (C) 2026 Del Player
  *
  *     Del Player is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ import 'package:del_player/utilities/playlist_utils.dart';
 import 'package:del_player/utilities/sharing_intent.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 late DelPlayerAudioHandler audioHandler;
 late StreamSubscription<String?> sharingIntentSubscription;
@@ -115,6 +116,13 @@ class _DelPlayerState extends State<DelPlayer> {
     super.initState();
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    // Demande la permission de notification pour Android 13+
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      if (await Permission.notification.isDenied) {
+        await Permission.notification.request();
+      }
+    });
 
     final platformDispatcher = PlatformDispatcher.instance;
 
@@ -229,6 +237,7 @@ class _DelPlayerState extends State<DelPlayer> {
                 : Brightness.dark,
           ),
           child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
             themeMode: themeMode,
             darkTheme: getAppTheme(colorScheme),
             theme: getAppTheme(colorScheme),
@@ -271,7 +280,7 @@ Future<void> initialisation() async {
       config: const AudioServiceConfig(
         androidNotificationChannelId: 'com.delplayer.music',
         androidNotificationChannelName: 'delplayer',
-        androidNotificationIcon: 'drawable/ic_launcher_foreground',
+        androidNotificationIcon: 'mipmap/ic_launcher',
         androidShowNotificationBadge: true,
         androidStopForegroundOnPause: false,
       ),

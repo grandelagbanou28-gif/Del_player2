@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2026 Valeri Gokadze
+ *     Copyright (C) 2026 Del Player
  *
  *     Del Player is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -19,12 +19,10 @@
  *     please visit: 
  */
 
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:del_player/constants/app_constants.dart';
 import 'package:del_player/constants/version.dart';
 import 'package:del_player/extensions/l10n.dart';
-import 'package:del_player/utilities/url_launcher.dart';
 import 'package:del_player/widgets/mini_player_bottom_space.dart';
 
 class AboutPage extends StatelessWidget {
@@ -32,6 +30,9 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n!.about)),
       body: SingleChildScrollView(
@@ -44,9 +45,9 @@ class AboutPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'delplayer',
+                    'Del Player',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: colorScheme.primary,
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'paytoneOne',
@@ -58,7 +59,7 @@ class AboutPage extends StatelessWidget {
                     width: 40,
                     height: 3,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: colorScheme.primary,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -69,15 +70,13 @@ class AboutPage extends StatelessWidget {
                       vertical: 7,
                     ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      color: colorScheme.secondaryContainer,
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Text(
                       'v$appVersion',
                       style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSecondaryContainer,
+                        color: colorScheme.onSecondaryContainer,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.2,
@@ -87,76 +86,76 @@ class AboutPage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 32),
-            Material(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(20),
-              clipBehavior: Clip.antiAlias,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
+            const SizedBox(height: 28),
+            _SectionCard(
+              icon: Icons.info_outline,
+              title: 'À propos',
+              children: [
+                _InfoRow(label: 'Nom', value: 'Del Player'),
+                _InfoRow(label: 'Version', value: appVersion),
+                _InfoRow(label: 'Framework', value: 'Flutter 3.44'),
+                _InfoRow(label: 'Langage', value: 'Dart 3.12'),
+              ],
+            ),
+            const SizedBox(height: 14),
+            _SectionCard(
+              icon: Icons.star_outline,
+              title: 'Fonctionnalités',
+              children: [
+                _BulletPoint(text: 'Streaming musical sans pub'),
+                _BulletPoint(text: 'Mode hors ligne'),
+                _BulletPoint(text: 'Égaliseur 10 bandes intégré'),
+                _BulletPoint(text: 'Paroles synchronisées'),
+                _BulletPoint(text: '21 langues supportées'),
+                _BulletPoint(text: 'Thème Material You'),
+                _BulletPoint(text: 'Partage de playlists'),
+              ],
+            ),
+            const SizedBox(height: 14),
+            _SectionCard(
+              icon: Icons.favorite_outline,
+              title: 'Développé avec passion',
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    'Del Player est une application open source sous licence GPLv3. '
+                    'Libre, gratuite, sans publicité ni abonnement.',
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                      height: 1.5,
+                    ),
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Image.network(
-                        'https://avatars.githubusercontent.com/u/79704324?v=4',
-                        width: 52,
-                        height: 52,
-                        fit: BoxFit.cover,
-                      ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            _SectionCard(
+              icon: Icons.description_outlined,
+              title: 'Licence',
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    'Ce programme est distribué sous licence GNU General Public License v3.0.',
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                      height: 1.5,
                     ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Valeri Gokadze',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'WEB & APP Developer',
-                            style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _SocialButton(
-                          icon: FluentIcons.code_24_filled,
-                          tooltip: 'Github',
-                          onPressed: () {
-                            launchURL(Uri.parse('https://github.com/gokadzev'));
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        _SocialButton(
-                          icon: FluentIcons.globe_24_filled,
-                          tooltip: 'Website',
-                          onPressed: () {
-                            launchURL(Uri.parse('https://gokadzev.github.io'));
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Center(
+              child: Text(
+                '© ${DateTime.now().year} Del Player',
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -168,35 +167,120 @@ class AboutPage extends StatelessWidget {
   }
 }
 
-class _SocialButton extends StatelessWidget {
-  const _SocialButton({
+class _SectionCard extends StatelessWidget {
+  const _SectionCard({
     required this.icon,
-    required this.tooltip,
-    required this.onPressed,
+    required this.title,
+    required this.children,
   });
 
   final IconData icon;
-  final String tooltip;
-  final VoidCallback onPressed;
+  final String title;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Material(
-      color: colorScheme.primaryContainer,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(12),
-        child: Tooltip(
-          message: tooltip,
-          child: Container(
-            width: 40,
-            height: 40,
-            alignment: Alignment.center,
-            child: Icon(icon, size: 20, color: colorScheme.primary),
-          ),
+      color: colorScheme.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(20),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 20, color: colorScheme.primary),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...children,
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BulletPoint extends StatelessWidget {
+  const _BulletPoint({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 6, right: 10),
+            child: Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

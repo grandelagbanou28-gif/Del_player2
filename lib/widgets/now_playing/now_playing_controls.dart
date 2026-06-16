@@ -110,6 +110,8 @@ class NowPlayingControls extends StatelessWidget {
               child: const PositionSlider(),
             ),
             SizedBox(height: spacing),
+            _VolumeSlider(size: size),
+            SizedBox(height: spacing),
             PlayerControlButtons(
               metadata: metadata,
               iconSize: adjustedIconSize * iconScale,
@@ -119,6 +121,61 @@ class NowPlayingControls extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _VolumeSlider extends StatefulWidget {
+  const _VolumeSlider({required this.size});
+
+  final Size size;
+
+  @override
+  State<_VolumeSlider> createState() => _VolumeSliderState();
+}
+
+class _VolumeSliderState extends State<_VolumeSlider> {
+  double _volume = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _volume = audioHandler.volume;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDesktop = widget.size.width > 800;
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: isDesktop ? 48 : 32,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            FluentIcons.speaker_2_24_regular,
+            size: 18,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          Expanded(
+            child: Slider(
+              value: _volume,
+              min: 0.0,
+              max: 1.0,
+              divisions: 100,
+              onChanged: (value) {
+                setState(() => _volume = value);
+                audioHandler.setVolume(value);
+              },
+            ),
+          ),
+          Icon(
+            FluentIcons.speaker_2_24_regular,
+            size: 18,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
     );
   }
 }

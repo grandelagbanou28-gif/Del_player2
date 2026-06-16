@@ -551,6 +551,8 @@ class DelPlayerAudioHandler extends BaseAudioHandler {
               MediaAction.seek,
               MediaAction.seekForward,
               MediaAction.seekBackward,
+              MediaAction.skipToNext,
+              MediaAction.skipToPrevious,
             },
             androidCompactActionIndices: const [0, 1, 3],
             processingState: newProcessingState,
@@ -670,36 +672,22 @@ class DelPlayerAudioHandler extends BaseAudioHandler {
   }
 
   Future<void> _backgroundAddSongsToQueue() async {
-    // Fire and forget - this runs as a background task without blocking playback
     if (offlineMode.value) return;
 
-    // Use microtask to avoid blocking the current operation
     unawaited(
       Future.microtask(() async {
         try {
-          // Only add songs if we're still playing
-          if (!audioPlayer.playing) {
-            return;
-          }
-
           final baseSong = _getCurrentSongForRecommendations();
           if (baseSong == null) {
             return;
           }
 
-          // Fetch similar songs silently in the background
           await getSimilarSong(baseSong['ytid']).timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               logger.log('Background song fetch timed out');
             },
           );
-
-          // If we got a recommendation, add it to the queue
-          // But only if still playing (user might have paused during fetch)
-          if (!audioPlayer.playing) {
-            return;
-          }
 
           if (nextRecommendedSong != null) {
             final songToAdd = nextRecommendedSong;
@@ -1579,6 +1567,16 @@ class DelPlayerAudioHandler extends BaseAudioHandler {
   Future<void> rewind() =>
       seek(Duration(seconds: audioPlayer.position.inSeconds - 15));
 
+  double get volume => audioPlayer.volume;
+
+  Future<void> setVolume(double volume) async {
+    try {
+      await audioPlayer.setVolume(volume);
+    } catch (e, stackTrace) {
+      logger.log('Error setting volume', error: e, stackTrace: stackTrace);
+    }
+  }
+
   Future<bool> _resolveOfflineAndSetPaths(Map songData) async {
     try {
       final ytid = songData['ytid']?.toString();
@@ -2098,9 +2096,8 @@ class DelPlayerAudioHandler extends BaseAudioHandler {
 
   Future<void> playAgain() async {
     try {
-      // Seek back to start
       await audioPlayer.seek(Duration.zero);
-      // Track the replay as a new listen
+      await audioPlayer.play();
       if (currentSong != null) {
         unawaited(updateRecentlyPlayed(currentSong!['ytid']));
       }

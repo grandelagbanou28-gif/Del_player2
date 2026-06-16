@@ -1,5 +1,5 @@
 /*
- *     Copyright (C) 2026 Valeri Gokadze
+ *     Copyright (C) 2026 Del Player
  *
  *     Del Player is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
